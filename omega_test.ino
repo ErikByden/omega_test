@@ -31,6 +31,7 @@ int switchNumber=0;
 char ALLDATA[100];
 int x  =0;
 int i = 0;
+String change;
 
 // Declare and initialise variable for radio status
 int status = WL_IDLE_STATUS;
@@ -67,18 +68,29 @@ buf.init();
         if(i<6)
         {
           
-          Serial.print(c);
-          i++;
-          if(i==6 ) //c!='H' && c!='f' && c!='a' && c!=' '
+         
+           Serial.print(c);
+                     
+
+          if(i==5 ) //c!='H' && c!='f' && c!='a' && c!=' '
           {
-            if(c==1 || c==2 || c==3 || c==4 || c==5 || c==6 || c==7)
+            
+                                    Serial.print("näst innersta loopen");
+                                               Serial.print(c);
+
+            if(c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7')
             {
-              switchNumber = c;
-              }
+              change = c;
+              switchNumber = change.toInt();
+                        Serial.print("innersta loopen");
+                       Serial.print(c);
+              Serial.print(switchNumber);
+               }
           
-         Serial.print(c);
+
             }
           }
+          i++;
 
           
 
@@ -162,7 +174,7 @@ switch(switchNumber)
   city = "London";
   break;
   case 7:
-  city = "SanFrancisco";
+  city =  "Dubai";// "SanFrancisco";
   break;
  
   }
@@ -224,8 +236,11 @@ JsonObject& weather_0 = root["weather"][0];
 
 //double longitude = root ["weather"][0];
 const char* weather = weather_0 ["main"];
+const char* CITY = root["name"];
 //Serial.print(longitude);
 Serial.print(weather);
+Serial.print(CITY);
+
 
 delay(3000);
   switchNumber = 0;
