@@ -61,18 +61,13 @@ buf.init();
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
-       // Serial.write(c);
         buf.push(c);
 
-        //for(int i=0;i>6;i++)
         if(i<6)
         {
-          
-         
-           Serial.print(c);
-                     
+           Serial.print(c);          
 
-          if(i==5 ) //c!='H' && c!='f' && c!='a' && c!=' '
+          if(i==5 ) 
           {
             
                                     Serial.print("näst innersta loopen");
@@ -86,8 +81,6 @@ buf.init();
                        Serial.print(c);
               Serial.print(switchNumber);
                }
-          
-
             }
           }
           i++;
