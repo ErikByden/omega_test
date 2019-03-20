@@ -1,6 +1,6 @@
 
 #include <LiquidCrystal_I2C.h>
-
+#include <LCD.h>
 
 
 
@@ -43,6 +43,8 @@ int CS = 24;
 int CLK = 26;
 String secondWeather;
 String secondCITY;
+//String weather = "Storm";
+//String CITY = "Bollnas";
 LedControl lc=LedControl(DIN,CLK,CS,0);
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE); 
@@ -52,9 +54,10 @@ int status = WL_IDLE_STATUS;
 WiFiEspServer server(80);
 RingBuffer buf(8);
 WiFiEspClient client;
+
 void setup()
 {
-    lcd.begin(16,3); 
+    lcd.begin(16,1); 
   lcd.backlight();
   lcd.setCursor(0,0);
   lc.shutdown(0,false);       //The MAX72XX is in power-saving mode on startup
@@ -69,25 +72,8 @@ void setup()
 
 void loop()
 {
- lcd.print("City: ");
-    lcd.print("Stockholm");
-    lcd.setCursor(0,1);
-    lcd.print("Weather: ");
-    lcd.print("Rain");
-    delay(2000);
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print("Temp: ");
-    lcd.print("10 ");
-    //för att få ut specialtecken.
-    lcd.print((char) 223);
-    lcd.print("C");
-    lcd.setCursor(0,1);
-    lcd.print("Awesome :)");
-    delay(2000);
-    lcd.clear();
 
-
+ 
 
 
 
@@ -175,31 +161,6 @@ client.print(html);
 }
 
 
-void KOLLA()
-{
-  
-  
-  
-    lcd.print("City: ");
-    lcd.print("Stockholm");
-    lcd.setCursor(0,1);
-    lcd.print("Weather: ");
-    lcd.print("Rain");
-    delay(2000);
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print("Temp: ");
-    lcd.print("10 ");
-    //för att få ut specialtecken.
-    lcd.print((char) 223);
-    lcd.print("C");
-    lcd.setCursor(0,1);
-    lcd.print("Awesome :)");
-    delay(2000);
-    lcd.clear();
-  
-  }
-
 void jSon()
 {
 
@@ -283,12 +244,14 @@ JsonObject& weather_0 = root["weather"][0];
 //const char* CITY = root["name"];
 String weather = weather_0 ["main"];
 String CITY = root["name"];
+String description = weather_0["description"];
 //secondWeather = weather;
 //secondCITY = CITY;
 Serial.print(weather);
 Serial.print(CITY);
+Serial.print(description);
 
-            if(weather == "Clouds"){cloud();}
+            if(weather == "Clouds"){cloud(CITY,weather,description);}
 else if(weather == "Clear"){sun();}
 else if(weather == "Thunderstorm"){thunderstorm();}
 else if (weather == "Rain"){rain();}
@@ -300,6 +263,7 @@ delay(3000);
   switchNumber = 0;
   clientJson.stop();
   }
+
 
   
 void wifiInit()
@@ -362,7 +326,7 @@ void printByte(byte character [])
     lc.setRow(0,i,character[i]);
   }
 }
-void cloud()
+void cloud(String STAD,String VADER,String BESKRIVNING)
 {
    byte clouds[8] = {0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,};
     byte clouds2[8] = {0x00,0x01,0x03,0x01,0x00,0x00,0x00,0x00,};
@@ -387,6 +351,26 @@ void cloud()
     byte clouds21[8] = {0x00,0x00,0x00,0x00,0x00,0x80,0xC0,0x80,};
     byte clouds22[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x80,0x00,};
     byte clouds23[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,};
+    int lenght = BESKRIVNING.length();
+    lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+   lcd.print("Weather: ");
+   lcd.print(BESKRIVNING);
+
+for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) {
+    // scroll one position left:
+    lcd.scrollDisplayLeft();
+    // wait a bit:
+    delay(300);
+  }
+   delay(3000);
+    //lcd.clear();
+       // lcd.print("Temp: ");
+    //lcd.print(STAD);
+    //lcd.setCursor(0,1);
+  // lcd.print("Weather: ");
+  // lcd.print(VADER);
       for(int k=0;k<4;k++){
     printByte(clouds);
     delay (200);
@@ -558,7 +542,6 @@ void thunderstorm()
     delay(200);
 
 }
-
 
 
 
