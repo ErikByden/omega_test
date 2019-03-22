@@ -1,9 +1,6 @@
 
 #include <LiquidCrystal_I2C.h>
 #include <LCD.h>
-
-
-
 #include <LedControl.h>
 #include <SoftwareSerial.h>
 #include "WiFiEsp.h"
@@ -11,40 +8,33 @@
 #include <SPI.h>
 #include <Wire.h>
 
+const int port = 80;
 const char serverJson[] = "api.openweathermap.org";
+const char ssid[] =  "AndroidAP"; 
+const char pass[] = "nevc6096";
 const String email = "eri_byd@hotmail.com";
 const String xid = "dicegame24";
-String data = "P1,4,2,1";
 const String hostname = "primat.se";
-String countryCode = "se";
 const String APIKey = "0c6c77820236b1a47e8ac996c35c21c8";
-//const String uri = "/services/data/" + email + "-" + xid + ".csv";
 const String senduri = "/services/sendform.aspx?xdata=" + email + "|" + xid;
-const int port = 80;
+String data = "P1,4,2,1";
 String line;
-// Create module object on GPIO pin
+String countryCode = "se";
 
+// Create module object on GPIO pin
 // wifi 6 (RX) and 7 (TX)
 SoftwareSerial mySerial1(10, 11);
-
-// Declare and initialise global arrays for WiFi settings
-const char ssid[] =  "AndroidAP"; 
-const char pass[] = "nevc6096"; 
-
-
   WiFiEspClient clientJson;
+  
 int switchNumber = 0;
-int x  =0;
+int x = 0;
 int i = 0;
 int y = 0;
 String change;
+
 int DIN = 22;
 int CS = 24;
 int CLK = 26;
-String secondWeather;
-String secondCITY;
-//String weather = "Storm";
-//String CITY = "Bollnas";
 LedControl lc=LedControl(DIN,CLK,CS,0);
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE); 
@@ -57,12 +47,13 @@ WiFiEspClient client;
 
 void setup()
 {
-    lcd.begin(16,1); 
+    lcd.begin(16,2); 
   lcd.backlight();
   lcd.setCursor(0,0);
   lc.shutdown(0,false);       //The MAX72XX is in power-saving mode on startup
  lc.setIntensity(0,15);      // Set the brightness to maximum value
  lc.clearDisplay(0);         // and clear the display
+   
     // Initialize serial for debugging
     Serial.begin(115200);
     // Initialize serial
@@ -72,11 +63,6 @@ void setup()
 
 void loop()
 {
-
- 
-
-
-
   
 client = server.available();
 if(client) {  
@@ -85,8 +71,9 @@ if(client) {
 buf.init(); 
     Serial.println(F("New client"));
     boolean currentLineIsBlank = true;
-    while (client.connected()) {
-      if (client.available()) {
+   while (client.connected()) {
+          if (client.available()) {
+            
         char c = client.read();
         buf.push(c);
 
@@ -97,14 +84,12 @@ buf.init();
           if(i==5 ) 
           {
             
-                                    Serial.print("näst innersta loopen");
-                                               Serial.print(c);
+               Serial.print(c);
 
             if(c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7')
             {
               change = c;
               switchNumber = change.toInt();
-                        Serial.print("innersta loopen");
                        Serial.print(c);
               Serial.print(switchNumber);
                }
@@ -128,7 +113,7 @@ buf.init();
             "Connection: close\r\n"
             "\r\n");
 
-String html ="<!DOCTYPE html> <html> <head> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <link rel= \"stylesheet\" href=\"https://zztorp.github.io/WeatherDataHtmlCss/main.css\"> </head> <body> <h1 align=\"center\">Mathilda & Eriks IoT-Projekt</h1> <h1 align=\"center\">Weather Data</h1> <div class=\"row\"> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Stockholm.jpg\"  style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/2'\"> Stockholm</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Tokyo.jpg\" style=\"width:100%\" alt=\"centered image\"/> <button class=\"btn\" onclick=\"window.location.href='/1'\">Tokyo</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Paris.jpg\" alt=\"Paris\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/5'\">Paris</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Amsterdam.jpg\" alt=\"Amsterdam\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/3'\">Amsterdam</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/London.jpg\" alt=\"London\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/6'\">London</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Barcelona.jpg\" alt=\"Barcelona\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/4'\">Barcelona</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/SanFrancisco.jpg\" alt=\"SanFrancisco\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/7'\">San Francisco</button> </div> </div> </body> </html>";
+String html ="<!DOCTYPE html> <html> <head> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <link rel= \"stylesheet\" href=\"https://zztorp.github.io/WeatherDataHtmlCss/main.css\"> </head> <body> <h1 align=\"center\">Mathilda & Eriks IoT-Projekt</h1> <h1 align=\"center\">Weather Data</h1> <div class=\"row\"> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Stockholm.jpg\"  style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/2'\"> Stockholm</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Tokyo.jpg\" style=\"width:100%\" alt=\"centered image\"/> <button class=\"btn\" onclick=\"window.location.href='/1'\">Tokyo</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Paris.jpg\" alt=\"Paris\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/5'\">Paris</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Amsterdam.jpg\" alt=\"Amsterdam\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/3'\">Amsterdam</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/London.jpg\" alt=\"London\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/6'\">London</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Barcelona.jpg\" alt=\"Barcelona\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/4'\">Barcelona</button> </div> <div class=\"column\"> <div class=\"container\"> <img src=\"https://zztorp.github.io/WeatherDataHtmlCss/Sydney.jpg\" alt=\"Sydney\" style=\"width:100%\"> <button class=\"btn\" onclick=\"window.location.href='/7'\">Sydney</button> </div> </div> </body> </html>";
 client.print(html);
             
          
@@ -153,11 +138,6 @@ client.print(html);
 
    if(!switchNumber == 0){jSon();}
   }
-      //  if(!switchNumber == 0 && client.available() == 0)
-      //  {        
-       // }
-
-
 }
 
 
@@ -192,11 +172,10 @@ switch(switchNumber)
   city = "London";
   break;
   case 7:
-  city =  "Dubai";// "SanFrancisco";
+  city =  "Sydney";
   break;
  
   }
-
   String uri = "/data/2.5/weather?q=" + city + "&APPID=" + APIKey;//"/data/2.5/weather?q=" + city + "," + countryCode + "&APPID=" + APIKey;
 delay(1000);
     // if you get a connection, report back via serial
@@ -217,45 +196,79 @@ delay(1000);
     }
 
       
-Serial.print(F("sistatest"));
+   Serial.print(F("sistatest"));
    char endOfHeaders[] = "\r\n\r\n";
-   if (!clientJson.find(endOfHeaders)) {
+      if (!clientJson.find(endOfHeaders)) {
    Serial.println(F("Invalid response"));
-    Serial.print(F("innan buff"));
+   Serial.print(F("innan buff"));
 
    return;
   }
- 
-//Serial.print(F("innan parce"));
-
      
 StaticJsonBuffer <2000> jsonBuffer;
-
 JsonObject& root = jsonBuffer.parseObject(clientJson);
-//Serial.print(F("efter parce"));
 
-if(!root.success()) {
-  Serial.println(F("parseObject() failed"));
-}
+    if(!root.success()) {Serial.println(F("parseObject() failed"));}
 
 JsonObject& weather_0 = root["weather"][0];
 
-//const char* weather = weather_0 ["main"];
-//const char* CITY = root["name"];
 String weather = weather_0 ["main"];
 String CITY = root["name"];
 String description = weather_0["description"];
-//secondWeather = weather;
-//secondCITY = CITY;
-Serial.print(weather);
-Serial.print(CITY);
-Serial.print(description);
+String temp =  root["main"]["temp"];
+float celciusTemp  = temp.toFloat();
+celciusTemp = celciusTemp - 273.15;
 
-            if(weather == "Clouds"){cloud(CITY,weather,description);}
-else if(weather == "Clear"){sun();}
-else if(weather == "Thunderstorm"){thunderstorm();}
-else if (weather == "Rain"){rain();}
-else if (weather == "Snow"){snow();}
+  Serial.print(weather);
+  Serial.print(CITY);
+  Serial.print(description);
+
+     if(weather == "Clouds"){cloud(CITY,weather,description,celciusTemp);}
+else if(weather == "Clear"){sun(CITY,weather,description,celciusTemp);}
+else if(weather == "Thunderstorm"){thunderstorm(CITY,weather,description,celciusTemp);}
+else if (weather == "Rain"){rain(CITY,weather,description,celciusTemp);}
+else if (weather == "Snow"){snow(CITY,weather,description,celciusTemp);}
+else
+{
+  
+int lenght = description.length();
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("City: ");
+    lcd.print(CITY);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(celciusTemp);
+     delay(3000);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Weather: ");
+    lcd.print(description);
+     delay(2000);
+for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) {
+    // scroll one position left:
+    lcd.scrollDisplayLeft();
+    // wait a bit:
+     delay(400);
+}
+     delay(2000);
+
+    for (int IGNORE = 0; IGNORE < lenght + 9 ; IGNORE++) {
+ 
+    lcd.clear();
+    
+  }
+
+      lcd.home();
+   delay(500);
+   
+ lcd.print("City: ");
+    lcd.print(CITY);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(celciusTemp);
+     
+  }
 
 
 
@@ -326,7 +339,7 @@ void printByte(byte character [])
     lc.setRow(0,i,character[i]);
   }
 }
-void cloud(String STAD,String VADER,String BESKRIVNING)
+void cloud(String STAD,String VADER,String BESKRIVNING, float TEMP)
 {
    byte clouds[8] = {0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,};
     byte clouds2[8] = {0x00,0x01,0x03,0x01,0x00,0x00,0x00,0x00,};
@@ -352,26 +365,43 @@ void cloud(String STAD,String VADER,String BESKRIVNING)
     byte clouds22[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x80,0x00,};
     byte clouds23[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,};
     int lenght = BESKRIVNING.length();
+    lcd.clear();
+    lcd.setCursor(0,0);
     lcd.print("City: ");
     lcd.print(STAD);
     lcd.setCursor(0,1);
-   lcd.print("Weather: ");
-   lcd.print(BESKRIVNING);
-
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     delay(3000);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Weather: ");
+    lcd.print(BESKRIVNING);
+     delay(2000);
 for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) {
     // scroll one position left:
     lcd.scrollDisplayLeft();
     // wait a bit:
-    delay(300);
+     delay(400);
+}
+delay(2000);
+
+    for (int IGNORE = 0; IGNORE < lenght + 9 ; IGNORE++) {
+ 
+    lcd.clear();
+    
   }
-   delay(3000);
-    //lcd.clear();
-       // lcd.print("Temp: ");
-    //lcd.print(STAD);
-    //lcd.setCursor(0,1);
-  // lcd.print("Weather: ");
-  // lcd.print(VADER);
-      for(int k=0;k<4;k++){
+
+      lcd.home();
+   delay(500);
+   
+ lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+          
+      for(int k=0;k<3;k++){
     printByte(clouds);
     delay (200);
     printByte(clouds2);
@@ -380,27 +410,27 @@ for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) 
     delay (200);
     printByte(clouds4);
     delay (200);
-        printByte(clouds5);
+    printByte(clouds5);
     delay (200);
     printByte(clouds6);
     delay (200);
-        printByte(clouds7);
+    printByte(clouds7);
     delay (200);
     printByte(clouds8);
     delay (200);
-        printByte(clouds9);
+    printByte(clouds9);
     delay (200);
     printByte(clouds10);
     delay (200);
-        printByte(clouds11);
+    printByte(clouds11);
     delay (200);
     printByte(clouds12);
     delay (200);
-        printByte(clouds13);
+    printByte(clouds13);
     delay (200);
     printByte(clouds14);
     delay (200);
-        printByte(clouds15);
+    printByte(clouds15);
     delay (200);
     printByte(clouds16);
     delay (200);
@@ -408,11 +438,11 @@ for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) 
     delay (200);
     printByte(clouds18);
     delay (200);
-        printByte(clouds19);
+    printByte(clouds19);
     delay (200);
     printByte(clouds20);
     delay (200);
-        printByte(clouds21);
+    printByte(clouds21);
     delay (200);
     printByte(clouds22);
     delay (200);
@@ -422,7 +452,7 @@ for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) 
 
 }
 
-void rain()
+void rain(String STAD,String VADER,String BESKRIVNING, float TEMP)
 {
     byte rain1[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x00,0x00,0x00};
     byte rain2[8] = {0x18,0x7E,0xFF,0x7E,0x24,0x00,0x00,0x00};
@@ -438,7 +468,46 @@ void rain()
     byte rain12[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x20,0x24,0x04};
     byte rain13[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x00,0x20,0x24};
     byte rain14[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x00,0x00,0x20};
+    byte rain15[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,};
+        
+int lenght = BESKRIVNING.length();
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     delay(3000);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Weather: ");
+    lcd.print(BESKRIVNING);
+     delay(2000);
+for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) {
+    // scroll one position left:
+    lcd.scrollDisplayLeft();
+    // wait a bit:
+    delay(400);
+}
+delay(2000);
+
+    for (int IGNORE = 0; IGNORE < lenght + 9 ; IGNORE++) {
+ 
+    lcd.clear();
+    
+  }
+
+      lcd.home();
+   delay(500);
    
+ lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     
+         for(int k=0;k<3;k++){
     printByte(rain1);
     delay (200);
     printByte(rain2);
@@ -467,10 +536,11 @@ void rain()
     delay (200);
     printByte(rain14);
     delay (200);
-
+         }
+         printByte(rain15);
 }
 
-void sun()
+void sun(String STAD,String VADER,String BESKRIVNING, float TEMP)
 {
    byte sun1[8] = {0x00,0x00,0x18,0x3C,0x3C,0x18,0x00,0x00,};
     byte sun2[8] = {0x00,0x08,0x3C,0x7C,0x3E,0x3C,0x10,0x00,};
@@ -480,7 +550,49 @@ void sun()
 
     byte sun6[8] = {0x00,0x00,0x3C,0x3C,0x3C,0x3C,0x00,0x00,};
     byte sun7[8] = {0x00,0x00,0x18,0x3C,0x3C,0x18,0x00,0x00,};
+    byte sun8[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,};
 
+
+int lenght = BESKRIVNING.length();
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     delay(3000);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Weather: ");
+    lcd.print(BESKRIVNING);
+     delay(2000);
+for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) {
+    // scroll one position left:
+    lcd.scrollDisplayLeft();
+    // wait a bit:
+    delay(400);
+}
+delay(2000);
+
+    for (int IGNORE = 0; IGNORE < lenght + 9 ; IGNORE++) {
+ 
+    lcd.clear();
+    
+  }
+
+      lcd.home();
+   delay(500);
+   
+ lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     
+
+
+      for(int k=0;k<6;k++){
     printByte(sun1);
     delay(200);
     printByte(sun2);
@@ -501,22 +613,66 @@ void sun()
     delay(200);
     printByte(sun5);
     delay(200);
-
-
+      }
+    printByte(sun8);
 }
 
-void thunderstorm()
+void thunderstorm(String STAD,String VADER,String BESKRIVNING, float TEMP)
 {
   byte thunderstorm[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x00,0x00,0x00};
     byte thunderstorm2[8] = {0x18,0x7E,0xFF,0x7E,0x18,0x30,0x60,0x80};
+    byte thunderstorm3[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,};
+
+
+int lenght = BESKRIVNING.length();
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     delay(3000);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Weather: ");
+    lcd.print(BESKRIVNING);
+     delay(2000);
+for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) {
+    // scroll one position left:
+    lcd.scrollDisplayLeft();
+    // wait a bit:
+    delay(400);
+}
+delay(2000);
+
+    for (int IGNORE = 0; IGNORE < lenght + 9 ; IGNORE++) {
+ 
+    lcd.clear();
+    
+  }
+
+      lcd.home();
+   delay(500);
+   
+ lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     
+
+      for(int k=0;k<20;k++){
 
     printByte(thunderstorm);
     delay (200);
     printByte(thunderstorm2);
     delay (200);
+      }
+      printByte(thunderstorm3);
   }
 
-  void snow()
+  void snow(String STAD,String VADER,String BESKRIVNING, float TEMP)
   {
     byte snow[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x00,0x00,0x00};
     byte snow2[8] = {0x18,0x7E,0xFF,0x7E,0x20,0x00,0x00,0x00};
@@ -525,7 +681,48 @@ void thunderstorm()
     byte snow5[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x10,0x04,0x20};
     byte snow6[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x00,0x10,0x04};
     byte snow7[8] = {0x18,0x7E,0xFF,0x7E,0x00,0x00,0x00,0x10};
+    byte snow8[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,};
 
+
+int lenght = BESKRIVNING.length();
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     delay(3000);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Weather: ");
+    lcd.print(BESKRIVNING);
+     delay(2000);
+for (int positionCounter = 16; positionCounter < lenght + 9; positionCounter++) {
+    // scroll one position left:
+    lcd.scrollDisplayLeft();
+    // wait a bit:
+    delay(400);
+}
+delay(2000);
+
+    for (int IGNORE = 0; IGNORE < lenght + 9 ; IGNORE++) {
+ 
+    lcd.clear();
+    
+  }
+
+      lcd.home();
+   delay(500);
+   
+ lcd.print("City: ");
+    lcd.print(STAD);
+    lcd.setCursor(0,1);
+    lcd.print("Temp: ");
+    lcd.print(TEMP);
+     
+
+      for(int k=0;k<8;k++){
     printByte(snow);
     delay(200);
     printByte(snow2);
@@ -540,7 +737,8 @@ void thunderstorm()
     delay(200);
     printByte(snow7);
     delay(200);
-
+      }
+    printByte(snow8);
 }
 
 
