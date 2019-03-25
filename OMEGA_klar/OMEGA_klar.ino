@@ -16,10 +16,7 @@ const String email = "eri_byd@hotmail.com";
 const String xid = "dicegame24";
 const String hostname = "primat.se";
 const String APIKey = "0c6c77820236b1a47e8ac996c35c21c8";
-const String senduri = "/services/sendform.aspx?xdata=" + email + "|" + xid;
 String data = "P1,4,2,1";
-String line;
-String countryCode = "se";
 
 // Create module object on GPIO pin
 // wifi 6 (RX) and 7 (TX)
@@ -42,7 +39,7 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 // Declare and initialise variable for radio status
 int status = WL_IDLE_STATUS;
 WiFiEspServer server(80);
-RingBuffer buf(8);
+//RingBuffer buf(8);
 WiFiEspClient client;
 
 void setup()
@@ -51,8 +48,8 @@ void setup()
   lcd.backlight();
   lcd.setCursor(0,0);
   lc.shutdown(0,false);       //The MAX72XX is in power-saving mode on startup
- lc.setIntensity(0,15);      // Set the brightness to maximum value
- lc.clearDisplay(0);         // and clear the display
+  lc.setIntensity(0,15);      // Set the brightness to maximum value
+  lc.clearDisplay(0);         // and clear the display
    
     // Initialize serial for debugging
     Serial.begin(115200);
@@ -68,23 +65,22 @@ client = server.available();
 if(client) {  
 
 
-buf.init(); 
+    //buf.init(); 
     Serial.println(F("New client"));
     boolean currentLineIsBlank = true;
-   while (client.connected()) {
+    while (client.connected()) {
           if (client.available()) {
             
         char c = client.read();
-        buf.push(c);
+        //buf.push(c);
+        //Serial.write(c);
 
         if(i<6)
         {
-           Serial.print(c);          
 
           if(i==5 ) 
           {
             
-               Serial.print(c);
 
             if(c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7')
             {
@@ -176,7 +172,7 @@ switch(switchNumber)
   break;
  
   }
-  String uri = "/data/2.5/weather?q=" + city + "&APPID=" + APIKey;//"/data/2.5/weather?q=" + city + "," + countryCode + "&APPID=" + APIKey;
+  String uri = "/data/2.5/weather?q=" + city + "&APPID=" + APIKey;
 delay(1000);
     // if you get a connection, report back via serial
     if (clientJson.connect(serverJson, port))
@@ -196,7 +192,6 @@ delay(1000);
     }
 
       
-   Serial.print(F("sistatest"));
    char endOfHeaders[] = "\r\n\r\n";
       if (!clientJson.find(endOfHeaders)) {
    Serial.println(F("Invalid response"));
@@ -341,7 +336,7 @@ void printByte(byte character [])
 }
 void cloud(String STAD,String VADER,String BESKRIVNING, float TEMP)
 {
-   byte clouds[8] = {0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,};
+    byte clouds[8] = {0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,};
     byte clouds2[8] = {0x00,0x01,0x03,0x01,0x00,0x00,0x00,0x00,};
     byte clouds3[8] = {0x00,0x03,0x07,0x03,0x00,0x00,0x00,0x00,};
     byte clouds4[8] = {0x01,0x07,0x0F,0x07,0x00,0x00,0x00,0x00,};
