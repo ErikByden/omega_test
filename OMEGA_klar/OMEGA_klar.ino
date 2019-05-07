@@ -73,9 +73,9 @@ if(client) {
             
         char c = client.read();
         //buf.push(c);
-        //Serial.write(c);
+        Serial.write(c);
 
-        if(i<6)
+        if(i<6) //if sats som är till för att c ska vara på rätt ställe i client.read för den information man behöver.
         {
 
           if(i==5 ) 
